@@ -1,6 +1,4 @@
-const admin = require('firebase-admin');
 
-const admin = require('firebase-admin');
 
 // Check if we are in a production environment (ENVIRONMENT variable set to 'production' or similar)
 // OR if the service account details are provided directly via env vars
