@@ -3,8 +3,19 @@
 // Check if we are in a production environment (ENVIRONMENT variable set to 'production' or similar)
 // OR if the service account details are provided directly via env vars
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  // Option 1: Load from a base64 encoded environment variable
-  const serviceAccount = JSON.parse(Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT, 'base64').toString('utf8'));
+  let serviceAccount;
+  try {
+    // Try Option 1: Base64 decode
+    serviceAccount = JSON.parse(Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT, 'base64').toString('utf8'));
+  } catch (e) {
+    // Try Option 2: Raw JSON string
+    try {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } catch (parseError) {
+      console.error("FIREBASE_SERVICE_ACCOUNT is neither valid Base64 nor valid JSON");
+      throw parseError;
+    }
+  }
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
